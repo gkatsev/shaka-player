@@ -388,16 +388,46 @@ describe('MpdUtils', () => {
       checkTimePoints(timePoints, result, 1, 5, Infinity);
     });
 
+    it('skips once via i attr', () => {
+      const timePoints = [
+        createTimePoint(0, 10, null, '+2'),
+        createTimePoint(null, 10, 0),
+      ];
+      const result = [
+        {start: 0, end: 10},
+        {start: 10, end: 20},
+        {start: 20, end: 30},
+      ];
+      checkTimePoints(timePoints, result, 1, 0, Infinity);
+    });
+
+    it('skips twice via i attr', () => {
+      const timePoints = [
+        createTimePoint(0, 10, null, '+2+2'),
+        createTimePoint(null, 10, 0),
+        createTimePoint(null, 10, 0),
+      ];
+      const result = [
+        {start: 0, end: 10},
+        {start: 10, end: 20},
+        {start: 20, end: 30},
+        {start: 30, end: 40},
+        {start: 40, end: 50},
+      ];
+      checkTimePoints(timePoints, result, 1, 0, Infinity);
+    });
+
     /**
      * Creates a new TimePoint.
      *
      * @param {?number} t
      * @param {?number} d
      * @param {?number} r
-     * @return {{t: ?number, d: ?number, r: ?number}}
+     * @param {?string} i
+     * @return {{t: ?number, d: ?number, r: ?number, i: ?string}}
      */
-    function createTimePoint(t, d, r) {
-      return {t: t, d: d, r: r};
+    function createTimePoint(t, d, r, i) {
+      return {t: t, d: d, r: r, i: i};
     }
 
     /**
@@ -419,6 +449,7 @@ describe('MpdUtils', () => {
                       (p.t != null ? ' t="' + p.t + '"' : '') +
                       (p.d != null ? ' d="' + p.d + '"' : '') +
                       (p.r != null ? ' r="' + p.r + '"' : '') +
+                      (p.i != null ? ' i="' + p.i + '"' : '') +
                       ' />');
       }
       xmlLines.push('</SegmentTimeline>');
@@ -430,6 +461,7 @@ describe('MpdUtils', () => {
 
       const timeline = MpdUtils.createTimeline(
           segmentTimeline, timescale, presentationTimeOffset, periodDuration);
+      console.log(timeline);
       expect(timeline).toEqual(
           expected.map((c) => jasmine.objectContaining(c)));
     }
