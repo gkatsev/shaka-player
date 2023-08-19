@@ -388,10 +388,9 @@ describe('MpdUtils', () => {
       checkTimePoints(timePoints, result, 1, 5, Infinity);
     });
 
-    it('skips once via i attr', () => {
+    it('repeats via i attr', () => {
       const timePoints = [
-        createTimePoint(0, 10, null, '+2'),
-        createTimePoint(null, 10, 0),
+        createTimePoint(0, 10, null, 'x3'),
       ];
       const result = [
         {start: 0, end: 10},
@@ -401,21 +400,51 @@ describe('MpdUtils', () => {
       checkTimePoints(timePoints, result, 1, 0, Infinity);
     });
 
+    it('skips once via i attr', () => {
+      const timePoints = [
+        createTimePoint(0, 10, null, '+2'),
+        createTimePoint(null, 5, 0),
+      ];
+      const result = [
+        {start: 0, end: 10},
+        {start: 10, end: 15},
+        {start: 15, end: 25},
+      ];
+      checkTimePoints(timePoints, result, 1, 0, Infinity);
+    });
+
     it('skips twice via i attr', () => {
       const timePoints = [
         createTimePoint(0, 10, null, '+2+2'),
-        createTimePoint(null, 10, 0),
-        createTimePoint(null, 10, 0),
+        createTimePoint(null, 5, 0),
+        createTimePoint(null, 5, 0),
+      ];
+      const result = [
+        {start: 0, end: 10},
+        {start: 10, end: 15},
+        {start: 15, end: 25},
+        {start: 25, end: 30},
+        {start: 30, end: 40},
+      ];
+      checkTimePoints(timePoints, result, 1, 0, Infinity);
+    });
+
+    it('skips and repeats via i attr', () => {
+      const timePoints = [
+        createTimePoint(0, 10, null, 'x2+2+2'),
+        createTimePoint(null, 5, 0),
+        createTimePoint(null, 5, 0),
       ];
       const result = [
         {start: 0, end: 10},
         {start: 10, end: 20},
-        {start: 20, end: 30},
-        {start: 30, end: 40},
+        {start: 20, end: 25},
+        {start: 25, end: 35},
+        {start: 35, end: 40},
         {start: 40, end: 50},
       ];
       checkTimePoints(timePoints, result, 1, 0, Infinity);
-    });
+    })
 
     /**
      * Creates a new TimePoint.
